@@ -9,42 +9,58 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 10;
     Button btnSend;
+    EditText editText;
     String telnum = "4661221";
     TextView sendedMsg;
     String msg;
+    RecyclerView messageRecycler;
+
+    ArrayList messages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         btnSend = findViewById(R.id.send);
+        editText = findViewById(R.id.edit_text);
 
+        messageRecycler = findViewById(R.id.message_recycler);
+        messageRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        DataAdapter dataAdapter = new DataAdapter(this,messages);
+        messageRecycler.setAdapter(dataAdapter);
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sendSms();
                 requestForSensSmsPermission();
             }
         });
     }
 
     void sendSms() {
-        final EditText editText = findViewById(R.id.edit_text);
-        TextView sendedMsg = findViewById(R.id.msg_send);
 
 
         msg = editText.getText().toString();
         SmsManager.getDefault().sendTextMessage(telnum, null, msg, null, null);
 
-        sendedMsg.setText(msg);
+        messages.add(msg);
+        editText.clearComposingText();
+
+
     }
 
 
